@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meme Gallery</title>
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        let memes = [];
+
+        async function fetchMemes() {
+            const response = await fetch('https://api.imgflip.com/get_memes');
+            const data = await response.json();
+            memes = data.data.memes;
+            displayMemes(memes);
+        }
+
+        function displayMemes(memesToDisplay) {
+            const memeContainer = document.getElementById('meme-container');
+            memeContainer.innerHTML = ''; // Clear previous memes
+
+            memesToDisplay.forEach(meme => {
+                const memeDiv = document.createElement('div');
+                memeDiv.className = 'meme';
+
+                const memeImage = document.createElement('img');
+                memeImage.src = meme.url;
+                memeImage.alt = meme.name;
+
+                const memeTitle = document.createElement('h3');
+                memeTitle.textContent = meme.name;
+
+                memeDiv.appendChild(memeImage);
+                memeDiv.appendChild(memeTitle);
+                memeContainer.appendChild(memeDiv);
+            });
+        }
+
+        function searchMemes() {
+            const searchInput = document.getElementById('search-input').value.toLowerCase();
+            const filteredMemes = memes.filter(meme => meme.name.toLowerCase().includes(searchInput));
+            displayMemes(filteredMemes);
+        }
+
+        window.onload = fetchMemes;
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Meme Gallery</h1>
+        <input type="text" id="search-input" placeholder="Search for memes..." oninput="searchMemes()">
+        <div id="meme-container" class="meme-container"></div>
+    </div>
+</body>
+</html>
